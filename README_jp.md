@@ -148,3 +148,63 @@ docker scout quickview
 
 これで元ドキュメントの Step 4 までが終わりました。次のブランチで Step 5 のポリシーの設定を行いましょう。
 
+## branch:v4
+
+Policy は Organization に基づくため、関連付けます。
+
+```sh
+docker scout config organization xlsoftpartner
+```
+
+関連付いた状態で再度 quickview してみます。
+
+```sh
+docker scout quickview
+
+Policy status  FAILED  (3/7 policies met, 2 missing data)
+
+  Status │                   Policy                    │           Results
+─────────┼─────────────────────────────────────────────┼──────────────────────────────
+  !      │ No default non-root user found              │
+  ✓      │ No AGPL v3 licenses                         │    0 packages
+  ✓      │ No fixable critical or high vulnerabilities │    0C     0H     0M     0L
+  ✓      │ No high-profile vulnerabilities             │    0C     0H     0M     0L
+  ?      │ No outdated base images                     │    No data
+         │                                             │    Learn more ↗
+  ?      │ No unapproved base images                   │    No data
+  !      │ Missing supply chain attestation(s)         │    2 deviations
+```
+
+まずは root ユーザー以外で実行するように [Dockerfile](./Dockerfile) を修正します。
+
+一番最後に `USER appuser` を追加します。
+
+次に `--provenance=true` と `--sbom=true` を追加することで、メタデータと SBOM を付与した状態でビルド、プッシュします。
+
+> メタデータを付与するには、containerd でビルドする必要があります。
+> Docker Desktop の「Settings＞General＞Use containerd for pulling and storing images」にチェックを付けておいてください。
+
+```sh
+docker build --provenance=true --sbom=true --push -t xlsoftpartner/scout-demo:v4 .
+```
+
+quickview してみます。
+
+```sh
+docker scout quickview
+
+Policy status  SUCCESS  (7/7 policies met)
+
+  Status │                   Policy                    │           Results
+─────────┼─────────────────────────────────────────────┼──────────────────────────────
+  ✓      │ Default non-root user                       │
+  ✓      │ No AGPL v3 licenses                         │    0 packages
+  ✓      │ No fixable critical or high vulnerabilities │    0C     0H     0M     0L
+  ✓      │ No high-profile vulnerabilities             │    0C     0H     0M     0L
+  ✓      │ No outdated base images                     │
+  ✓      │ No unapproved base images                   │    0 deviations
+  ✓      │ Supply chain attestations                   │    0 deviations
+```
+
+おめでとうございます！無事ポリシーにも準拠したイメージを作成できました。
+
