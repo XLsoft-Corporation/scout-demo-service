@@ -119,3 +119,32 @@ node アプリで利用している `express` に脆弱性があるようです�
 次のブランチで express をアップデートしましょう。
 
 
+## branch:v3
+
+`Fixed version  : 4.20.0` に基づいて [package.json](./package.json) を修正し、再度ビルドしてみます。
+
+```sh
+docker build --push -t xlsoftpartner/scout-demo:v3 .
+```
+
+同様に quickview します。
+
+```sh
+docker scout quickview
+    i New version 1.15.1 available (installed version is 1.15.0) at https://github.com/docker/scout-cli
+    ✓ Image stored for indexing
+    ✓ Indexed 103 packages
+    ✓ Provenance obtained from attestation
+
+    i Base image was auto-detected. To get more accurate results, build images with max-mode provenance attestations.
+      Review docs.docker.com ↗ for more information.
+
+  Target             │  local://xlsoftpartner/scout-demo:v3  │    0C     0H     1M     2L 
+    digest           │  a0020d2b8173                         │
+  Base image         │  alpine:3.19                          │    0C     0H     1M     0L 
+  Updated base image │  alpine:3.20                          │    0C     0H     1M     0L
+                     │                                       │
+```
+
+これで元ドキュメントの Step 4 までが終わりました。次のブランチで Step 5 のポリシーの設定を行いましょう。
+
