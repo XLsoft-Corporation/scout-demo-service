@@ -43,38 +43,7 @@ $ docker scout quickview
                        │                                              │    -2    -15     -6            -1
 ```
 
-お勧め情報に基づいて `cves` オプションで再スキャンしてみます。
-
-OS のパッケージ apk 経由のものだけでなく、アプリケーションで利用している rpm 経由のパッケージもリストされていることが分かります。
-
-```sh
-   0C     1H     1M     1L  express 4.17.1
-pkg:npm/express@4.17.1
-
-    ✗ HIGH CVE-2022-24999 [OWASP Top Ten 2017 Category A9 - Using Components with Known Vulnerabilities]
-      https://scout.docker.com/v/CVE-2022-24999
-      Affected range : <4.17.3
-      Fixed version  : 4.17.3
-      CVSS Score     : 7.5
-      CVSS Vector    : CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H
-
-    ✗ MEDIUM CVE-2024-29041 [Improper Validation of Syntactic Correctness of Input]
-      https://scout.docker.com/v/CVE-2024-29041
-      Affected range : <4.19.2
-      Fixed version  : 4.19.2
-      CVSS Score     : 6.1
-      CVSS Vector    : CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:C/C:L/I:L/A:N
-
-    ✗ LOW CVE-2024-43796 [Improper Neutralization of Input During Web Page Generation ('Cross-site Scripting')]
-      https://scout.docker.com/v/CVE-2024-43796
-      Affected range : <4.20.0
-      Fixed version  : 4.20.0
-      CVSS Score     : 2.3
-      CVSS Vector    : CVSS:4.0/AV:N/AC:L/AT:P/PR:N/UI:P/VC:N/VI:N/VA:N/SC:L/SI:L/SA:L
-```
-
-次の v2 ブランチでは `Fixed version  : 4.20.0` に基づいて [package.json](./package.json) を修正し、再度ビルドしてみます。
-
+ベースイメージに脆弱性があることが分かります。次のブランチでベースイメージを更新してみます。
 
 
 
