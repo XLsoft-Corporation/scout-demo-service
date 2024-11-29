@@ -7,7 +7,7 @@
 ビルドしてプッシュします。
 
 ```sh
-docker build --push -t xlsoftpartner/docker-scout-demo:v1 .
+docker build --push -t xlsoftpartner/scout-demo:v1 .
 ```
 
 Scout を Org に関連付けします。
@@ -19,7 +19,7 @@ docker scout enroll xlsoftpartner
 リポジトリで Scout をオンにします。
 
 ```sh
-docker scout repo enable --org xlsoftpartner xlsoftpartner/docker-scout-demo
+docker scout repo enable --org xlsoftpartner xlsoftpartner/scout-demo
 ```
 
 現時点での脆弱性をチェックしてみます。
