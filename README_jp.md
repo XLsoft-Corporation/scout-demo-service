@@ -208,3 +208,93 @@ Policy status  SUCCESS  (7/7 policies met)
 
 おめでとうございます！無事ポリシーにも準拠したイメージを作成できました。
 
+
+## branch:v5
+
+Dockerfile の `FROM` が Digit 固定なので、2025/4/9 時点での最新版 3.21 にアップデートし、`package.json` も最新にしてみます。
+
+まずは PUSH しないでローカルで確認します。
+
+```sh
+docker build --provenance=true --sbom=true -t xlsoftpartner/scout-demo:v5 .
+```
+
+Quickview してみます。
+
+```sh
+docker scout quickview
+
+Policy status  FAILED  (6/7 policies met)
+
+  Status │                     Policy                     │           Results
+─────────┼────────────────────────────────────────────────┼──────────────────────────────
+  ✓      │ Default non-root user                          │
+  ✓      │ No AGPL v3 licenses                            │    0 packages
+  !      │ Fixable critical or high vulnerabilities found │    0C     1H     0M     0L
+  ✓      │ No high-profile vulnerabilities                │    0C     0H     0M     0L
+  ✓      │ No outdated base images                        │
+  ✓      │ No unapproved base images                      │    0 deviations
+  ✓      │ Supply chain attestations                      │    0 deviations
+```
+
+vulnerabilities が見つかってしまいました。
+
+```sh
+## Packages and Vulnerabilities
+
+   0C     1H     0M     0L  path-to-regexp 0.1.10
+pkg:npm/path-to-regexp@0.1.10
+
+Dockerfile (14:17)
+RUN  apk add --no-cache npm \
+ && npm i --no-optional \
+ && npm cache clean --force \
+ && apk del npm
+
+    ✗ HIGH CVE-2024-52798 [Inefficient Regular Expression Complexity]
+      https://scout.docker.com/v/CVE-2024-52798
+      Affected range : <0.1.12
+      Fixed version  : 0.1.12
+      CVSS Score     : 7.7
+      CVSS Vector    : CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:N/VC:N/VI:N/VA:H/SC:N/SI:N/SA:N/E:P
+```
+
+サジェスチョンにもあるように、0.1.12 以上にアップデートする必要がありそうです。[path-to-regexp](https://www.npmjs.com/package/path-to-regexp?activeTab=versions) や [path-to-regexp search results](https://github.com/search?q=repo%3Aexpressjs%2Fexpress%20Path-to-RegExp&type=code) のページにも記載がありますが、express に含まれるライブラリです。
+
+express の最新バージョンは 4.21.2 ですので、`package.json` のバージョンを `^4.20.0` に変更します。
+
+```sh
+docker build --provenance=true --sbom=true -t xlsoftpartner/scout-demo:v5 .
+```
+
+再度 `quickview` します。
+
+```sh
+docker scout quickview
+
+docker scout quickview
+    ✓ SBOM of image already cached, 98 packages indexed
+    ✓ Policy evaluation completed
+
+  Target     │  local://xlsoftpartner/scout-demo:v5  │    0C     0H     0M     0L 
+    digest   │  0ff303433a22                         │
+  Base image │  alpine:3.21                          │    0C     0H     0M     0L 
+
+Policy status  SUCCESS  (7/7 policies met)
+
+  Status │                   Policy                    │           Results
+─────────┼─────────────────────────────────────────────┼──────────────────────────────
+  ✓      │ Default non-root user                       │
+  ✓      │ No AGPL v3 licenses                         │    0 packages
+  ✓      │ No fixable critical or high vulnerabilities │    0C     0H     0M     0L
+  ✓      │ No high-profile vulnerabilities             │    0C     0H     0M     0L
+  ✓      │ No outdated base images                     │
+  ✓      │ No unapproved base images                   │    0 deviations
+  ✓      │ Supply chain attestations                   │    0 deviations
+```
+
+無事脆弱性が無くなりましたので、ビルド・プッシュします。
+
+```sh
+docker build --provenance=true --sbom=true --push -t xlsoftpartner/scout-demo:v5 .
+```
