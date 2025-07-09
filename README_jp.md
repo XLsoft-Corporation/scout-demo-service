@@ -296,7 +296,7 @@ Policy status  SUCCESS  (7/7 policies met)
 無事脆弱性が無くなりましたので、ビルド・プッシュします。
 
 ```sh
-docker build --provenance=true --sbom=true --push -t xlsoftpartner/scout-demo:v5 .
+docker build --platform linux/amd64,linux/arm64 --provenance=true --sbom=true --push -t xlsoftpartner/scout-demo:v5 .
 ```
 
 > 備考:  
