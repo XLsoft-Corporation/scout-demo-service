@@ -298,3 +298,6 @@ Policy status  SUCCESS  (7/7 policies met)
 ```sh
 docker build --provenance=true --sbom=true --push -t xlsoftpartner/scout-demo:v5 .
 ```
+
+> 備考:  
+> 2025/7/9 に再ビルド・再プッシュしています。

@@ -12,10 +12,10 @@ RUN apk add --no-cache \
 COPY package.json ./
 
 RUN  apk add --no-cache npm \
- && npm i --no-optional \
- && npm cache clean --force \
- && apk del npm
- 
+  && npm i --no-optional \
+  && npm cache clean --force \
+  && apk del npm
+
 COPY . /app
 
 CMD ["node","/app/app.js"]
